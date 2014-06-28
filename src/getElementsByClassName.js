@@ -5,5 +5,13 @@
 
 // But instead we're going to implement it from scratch:
 var getElementsByClassName = function(className){
-  // your code here
+    var classElements = new Array();
+    var allNodesOnDocument = document.all;
+    var pattern = new RegExp("(^|\\s)"+className+"(\\s|$)");
+    for (var i = 0; i < allNodesOnDocument.length; i++) {
+        if(pattern.test(allNodesOnDocument[i].className)){
+            classElements.push(allNodesOnDocument[i]);
+        }
+    }
+    return classElements;
 };
