@@ -2,25 +2,48 @@
 // var stringifyJSON = JSON.stringify;
 
 // but you don't so you're going to write it from scratch:
+// I feel like this function is overly bulky...
 var stringifyJSON = function(obj) {
-var stringifyed;
-//stringifyed['key'] = 'value';
-if (obj) {
-	if (typeof(obj) === "string") {
-		var tempString = '"' + obj + '"';
-		tempString = '"' + obj + '"';
-		stringifyed = tempString;
-	}else{
-			stringifyed = obj.toString();
+var stringifyed = "";
+var numberOfIterations = 0;
+var lastChar;
+var stringify = function(argument) {
+	numberOfIterations++;
+	lastChar = stringifyed.charAt(stringifyed.length -1)
+	if (numberOfIterations > 2 && lastChar !== "[" && lastChar !== ":") {
+		stringifyed += ",";
 	}
-}else if (obj === null) {
-	stringifyed = 'null';
-}else if (obj === false) {
-	stringifyed = 'false';
-}else if (obj === ''){
-	stringifyed = Array.new ;
+	if (typeof(argument) === "number" || argument) {
+		if (typeof(argument) === "string") {
+			var tempString = '"' + argument + '"';
+			tempString = '"' + argument + '"';
+			stringifyed += tempString;
+		}else if (Array.isArray(argument)) {
+			stringifyed += "[";
+			for (var i = 0; i < argument.length; i++) {
+				stringify(argument[i]);
+			}
+			stringifyed += "]";
+		}else if (typeof(argument) === "object"){
+			stringifyed += "{"
+			for(entry in argument){
+				if (typeof(argument[entry]) !== "function" && typeof(argument[entry]) !== "undefined") {
+					stringifyed += '"' + entry + '"' + ":";
+					stringify(argument[entry]);
+					stringifyed += ","
+				}
+			}
+			stringifyed += "}";
+			stringifyed = stringifyed.replace(/(,}$)/, "}");
+		}else {
+			stringifyed += argument.toString();
+		}
+	}else if (argument === null) {
+		stringifyed += 'null';
+	}else if (argument === false) {
+		stringifyed += 'false';
+	}
 }
-
-console.log(stringifyed);
+stringify(obj);
 return stringifyed;
 };
